@@ -33,7 +33,7 @@ exports.Record = class Record{
     }
 
     constructFromCSV(propNames, csvLine){
-        items = csvLine.split(',');
+        let items = csvLine.split(',');
 
         for(var i = 0; i < propNames.length; i++){
             this[propNames[i]] = items[i];
@@ -83,7 +83,6 @@ exports.createRecordArrayFromJson = function(jsonArray){
 exports.createRecordArrayFromCSV = function(lines){
     //takes input as an Array of lines
     //creates Array of records
-    logger.debug('Trying to create array of records')
 
     var propNames = lines[0].split(',');
     var recordArray = new Array();

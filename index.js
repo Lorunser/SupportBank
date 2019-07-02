@@ -2,18 +2,6 @@
 //user input
 const readline = require('readline-sync');
 
-//file input
-/*
-//const filename = './DodgyTransactions2015.csv';
-//const filename = './Transactions2014.csv';
-const filename = './Transactions2013.json';
-const fs = require('fs');
-const readStream = fs.createReadStream(filename);
-const lineReader = require('readline').createInterface({
-    input: readStream
-});
-*/
-
 //file imports
 record = require('./record.js');
 Person = require('./person.js').Person;
@@ -67,33 +55,24 @@ function getInput(people){
 }
 
 function readCSV(csvString){
-    /*
-    var lines = new Array();
-    var recordArray = new Array();
-    logger.debug('Trying to read from ' + filename)
+    try{
+        csvString = String(csvString);
+        let lines = csvString.split('\n');
+        let recordArray = record.createRecordArrayFromCSV(lines); 
+        return recordArray;
+    }  
+    catch(err) {
+        console.log('Error parsing CSV string:', err)
+        logger.error('Error parsing CSV string:', err)
+    }
     
-    lineReader.on('line', function (line) {
-        lines.push(line);
-    });
-
-    readStream.on('end', () => {
-        if(recordArray.length == 0){
-            logger.debug('Finished reading in file');
-            recordArray = record.createRecordArrayFromCSV(lines);
-            main(recordArray);
-        }
-    })
-    */
-
-    let lines = csvString.split("\n");
-    let recordArray = record.createRecordArrayFromCSV(lines); 
 }
 
 function readJSON(jsonString){
     try{
         let jsonArray = JSON.parse(jsonString);
         let recordArray = record.createRecordArrayFromJson(jsonArray);
-        main(recordArray);
+        return recordArray;
     }  
     catch(err) {
         console.log('Error parsing JSON string:', err)
@@ -105,7 +84,7 @@ function readXML(xmlString){
     try{
         let convert = require('xml-js');
         let jsonString = convert.xml2json(xmlString);
-        readJSON(jsonString);
+        return readJSON(jsonString);
     }
     catch(err) {
         console.log('Error parsing XML :', err)
@@ -116,6 +95,7 @@ function readXML(xmlString){
 function readFile(path){
     const fs = require('fs');
     logger.debug('Trying to read from ' + path)
+    let recordArray;
 
     fs.readFile(path, (err, text) => {
         if (err) {
@@ -125,24 +105,31 @@ function readFile(path){
         }
 
         if(path.match("/*.json")){
-            readJSON(text);
+            recordArray = readJSON(text);
+            main(recordArray);
         }
         else if(path.match("/*.csv")){
-            readCSV();
+            recordArray = readCSV(text);
+            main(recordArray);
         }
         else if(path.match("/*.xml")){
-            readXML();
+            recordArray = readXML(text);
+            main(recordArray);
         }
         else{
             console.log('Unsupported filetype');
             logger.error('Unsupported filetype');
-        })
+            return;
+        }
+
+    })
+
 }
 //#endregion
 
 //main
 function main(recordArray){
-    var people = createPeopleObject(recordArray);
+    let people = createPeopleObject(recordArray);
     
     while(true){
         var secondOption = getInput(people);
@@ -167,4 +154,4 @@ function main(recordArray){
 }
 
 logger.debug('Program launched');
-readFile("./Transactions2013.json");
+readFile("./Transactions2014.csv")
