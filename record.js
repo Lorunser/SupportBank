@@ -44,7 +44,7 @@ exports.Record = class Record{
         //amount validation
         if(isNaN(this.Amount)){
             var error_message = this.Amount + " is not a valid amount >> setting to 0"
-            logger.debug(error_message);
+            console.log(error_message);
             this.Amount = 0;
         }
         else{
@@ -59,7 +59,7 @@ exports.Record = class Record{
         }
         else{
             var error_message = this.Date + " is not a valid date >> setting to Y2K 1/1/2000"
-            logger.debug(error_message);
+            console.log(error_message);
             this.Date = moment("1/1/2000", "DD-MM-YYYY");
         }
     }
