@@ -28,41 +28,111 @@ exports.getInput = function(people){
     }
 }
 
-function readCSV(){
-    var lines = new Array();
-    var recordArray = new Array();
-    logger.debug('Trying to read from ' + filename)
+function readCSV(csvString){
+    try{
+        csvString = String(csvString);
+        let lines = csvString.split('\n');
+        let recordArray = record.createRecordArrayFromCSV(lines); 
+        return recordArray;
+    }  
+    catch(err) {
+        console.log('Error parsing CSV string:', err)
+        logger.error('Error parsing CSV string:', err)
+    }
     
-    lineReader.on('line', function (line) {
-        lines.push(line);
-    });
-
-    readStream.on('end', () => {
-        if(recordArray.length == 0){
-            logger.debug('Finished reading in file');
-            recordArray = createRecordArrayFromCSV(lines);
-            main(recordArray);
-        }
-    })
 }
 
-function readJSON(){
+function readJSON(jsonString){
+    try{
+        let jsonArray = JSON.parse(jsonString);
+        let recordArray = record.createRecordArrayFromJson(jsonArray);
+        return recordArray;
+    }  
+    catch(err) {
+        console.log('Error parsing JSON string:', err)
+        logger.error('Error parsing JSON string:', err)
+    }
+}
 
-    fs.readFile('./Transactions2013.json', (err, jsonString) => {
-        if (err) {
-            console.log("File read failed:", err);
-            logger.error('File read failed', err)
-            return;
+function readXML(xmlString){
+    const translator = {
+        "Date": "attributes.Date",
+        "Narration": "Description._text",
+        "From": "Parties.From._text",
+        "To": "Parties.To._text",
+        "Amount": "Value._text"
+    };
+    
+    try{
+        let convert = require('xml-js');
+        let jsonString = convert.xml2json(xmlString, {compact: true, spaces: 4});
+        
+        let jsonArray = JSON.parse(jsonString);
+        jsonArray = jsonArray.TransactionList.SupportTransaction;
+
+        const propNames = Object.keys(translator);
+
+        let jsonModelArray = new Array();
+
+        for(let i = 0; i < jsonArray.length; i++){
+            let jsonRecord = jsonArray[i];
+            let jsonModelRecord = new Object();
+
+            for(let j = 0; j < propNames.length; j ++){
+                let propertyInModel = propNames[j];
+                let propertyInXml = translator[propertyInModel];
+                let x = [jsonRecord].concat(propertyInXml.split('.'));
+                try{
+                    var value = x.reduce(function(a, b) { return a[b] });
+                }
+                catch (err) {
+                    console.log("error xml");
+                }
+                jsonModelRecord[propertyInModel] = value;
+
+            }
+
+            jsonModelArray.push(jsonModelRecord);
         }
 
-        try {
-            let jsonArray = JSON.parse(jsonString);
-            let recordArray = createRecordArrayFromJson(jsonArray);
-            main(recordArray);
-        } 
-        catch(err) {
-                console.log('Error parsing JSON string:', err)
-                logger.error('Error parsing JSON string:', err)
-            }
-        });
+        return readJSON(jsonString);
+    }
+    catch(err) {
+        console.log('Error parsing XML :', err)
+        logger.error('Error parsing XML :', err)
+    }    
+}
+
+exports.readFile = function(path){
+    const fs = require('fs');
+    logger.debug('Trying to read from ' + path)
+    let recordArray;
+    let text;
+
+    try{
+        text = fs.readFileSync(path);
+    }
+    catch (err) {
+        console.log("File read failed:", err);
+        logger.error('File read failed', err)
+        return;
+    }
+
+    if(path.match("/*.json")){
+        recordArray = readJSON(text);
+        return recordArray;
+    }
+    else if(path.match("/*.csv")){
+        recordArray = readCSV(text);
+        return recordArray;
+    }
+    else if(path.match("/*.xml")){
+        recordArray = readXML(text);
+        return recordArray;
+    }
+    else{
+        console.log('Unsupported filetype');
+        logger.error('Unsupported filetype');
+        return;
+    }
 }
