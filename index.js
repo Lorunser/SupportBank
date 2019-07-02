@@ -81,9 +81,41 @@ function readJSON(jsonString){
 }
 
 function readXML(xmlString){
+    const translator = {
+        "Date": "attributes.Date",
+        "Narration": "Description._text",
+        "From": "Parties.From._text",
+        "To": "Parties.To._text",
+        "Amount": "Value._text"
+    };
+    
     try{
         let convert = require('xml-js');
-        let jsonString = convert.xml2json(xmlString);
+        let jsonString = convert.xml2json(xmlString, {compact: true, spaces: 4});
+        
+        let jsonArray = JSON.parse(jsonString);
+        jsonArray = jsonArray.TransactionList.SupportTransaction;
+
+        const propNames = Object.keys(translator);
+
+        let jsonModelArray = new Array();
+
+        for(let i = 0; i < jsonArray.length; i++){
+            let jsonRecord = jsonArray[i];
+            let jsonModelRecord = new Object();
+
+            for(let j = 0; j < propNames.length; j ++){
+                let propertyInModel = propNames[j];
+                let propertyInXml = translator[propertyInModel];
+                let x = [jsonRecord].concat(propertyInXml.split('.'));
+                let value = x.reduce(function(a, b) { return a[b] })
+                jsonModelRecord[propertyInModel] = value;
+
+            }
+
+            jsonModelArray.push(jsonModelRecord);
+        }
+
         return readJSON(jsonString);
     }
     catch(err) {
@@ -154,4 +186,4 @@ function main(recordArray){
 }
 
 logger.debug('Program launched');
-readFile("./Transactions2014.csv")
+readFile("./Transactions2012.xml")

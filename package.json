@@ -10,6 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "log4js": "git+https://github.com/log4js-node/log4js-node.git",
-    "readline-sync": "^1.4.9"
+    "moment": "^2.24.0",
+    "readline-sync": "^1.4.9",
+    "xml-js": "^1.6.11"
   }
 }

@@ -19,6 +19,10 @@ exports.Record = class Record{
         this.validate();
     }
 
+    constructFromXml(xmlItem){
+
+    }
+
     constructFromJson(jsonItem){
         let propNames = Object.keys(jsonItem);
 
@@ -67,6 +71,10 @@ exports.Record = class Record{
     toString(){
         return this.Amount.toFixed(1) + " on " + moment(this.Date).format("DD-MM-YYYY") + " for " + this.Narrative + " | " + this.From + " >> " + this.To;
     }
+}
+
+class csvRecord{
+    
 }
 
 exports.createRecordArrayFromJson = function(jsonArray){
