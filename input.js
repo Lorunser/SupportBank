@@ -62,25 +62,7 @@ function readJSON(jsonString){
     }
 }
 
-function resolve(obj, path){
-    path = path.split('.');
-    var current = obj;
-    while(path.length) {
-        if(typeof current !== 'object') return undefined;
-        current = current[path.shift()];
-    }
-    return current;
-}
-
 function readXML(xmlString){
-    const translator = {
-        "Date": "_attributes.Date",
-        "Narrative": "Description._text",
-        "From": "Parties.From._text",
-        "To": "Parties.To._text",
-        "Amount": "Value._text"
-    };
-    
     try{
         let convert = require('xml-js');
         let jsonString = convert.xml2json(xmlString, {compact: true, spaces: 4});
@@ -88,7 +70,6 @@ function readXML(xmlString){
         let jsonArray = JSON.parse(jsonString);
         jsonArray = jsonArray.TransactionList.SupportTransaction;
 
-        //return DataFormatter.createRecordArrayFromJson(translate(jsonArray, translator));
         return DataFormatter.createRecordArrayFromXml(jsonArray);
     }
     catch(err) {
