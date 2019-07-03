@@ -34,21 +34,6 @@ exports.getInput = function(people){
     }
 }
 
-function readCSV(csvString){
-    try{
-        csvString = String(csvString);
-        let lines = csvString.split('\n');
-        let recordArray = DataFormatter.createRecordArrayFromCsv(lines); 
-        return recordArray;
-    }  
-    catch(err) {
-        console.log('Error parsing CSV string:', err)
-        logger.error('Error parsing CSV string:', err)
-        throw err;
-    }
-    
-}
-
 function readJSON(jsonString){
     try{
         let jsonArray = JSON.parse(jsonString);
@@ -82,7 +67,7 @@ exports.readFile = function(path){
             return recordArray;
         }
         else if(path.match("/*.csv")){
-            recordArray = readCSV(text);
+            recordArray = DataFormatter.createRecordArrayFromCsv(text);
             return recordArray;
         }
         else if(path.match("/*.xml")){

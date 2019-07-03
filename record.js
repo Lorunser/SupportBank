@@ -135,7 +135,10 @@ exports.DataFormatter = class DataFormatter{
         return recordArray;
     }
 
-    static createRecordArrayFromCsv(lines){
+    static createRecordArrayFromCsv(csvString){
+        csvString = String(csvString);
+        let lines = csvString.split('\n');
+
         var propNames = lines[0].split(',');
         var recordArray = new Array();
 
@@ -156,6 +159,7 @@ exports.DataFormatter = class DataFormatter{
             "To": "Parties.To._text",
             "Amount": "Value._text"
         };
+
         let convert = require('xml-js');
         let jsonString = convert.xml2json(xmlString, {compact: true, spaces: 4});
         
