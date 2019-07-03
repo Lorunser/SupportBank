@@ -32,8 +32,12 @@ exports.Record = class Record{
         }
 
         //mary formats
-        this.From = this.FromAccount;
-        this.To = this.ToAccount;
+        if(this.hasOwnProperty("FromAccount")){
+            this.From = this.FromAccount;
+        }
+        if(this.hasOwnProperty("ToAccount")){
+            this.To = this.toAccount;
+        }
     }
 
     constructFromCSV(propNames, csvLine){

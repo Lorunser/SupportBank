@@ -82,7 +82,7 @@ function resolve(obj, path){
 
 function readXML(xmlString){
     const translator = {
-        "Date": "attributes.Date",
+        "Date": "_attributes.Date",
         "Narration": "Description._text",
         "From": "Parties.From._text",
         "To": "Parties.To._text",
@@ -96,8 +96,18 @@ function readXML(xmlString){
         let jsonArray = JSON.parse(jsonString);
         jsonArray = jsonArray.TransactionList.SupportTransaction;
 
-        const propNames = Object.keys(translator);
+        return translate(jsonArray, translator);
+    }
+    catch(err) {
+        console.log('Error parsing XML :', err)
+        logger.error('Error parsing XML :', err)
+        throw err;
+    }    
+}
 
+function translate(jsonArray, translator){
+    try{
+        const propNames = Object.keys(translator);
         let jsonModelArray = new Array();
 
         for(let i = 0; i < jsonArray.length; i++){
@@ -111,16 +121,16 @@ function readXML(xmlString){
                 jsonModelRecord[propertyInModel] = value;
 
             }
-
             jsonModelArray.push(jsonModelRecord);
         }
 
-        return readJSON(jsonString);
+        return jsonModelArray;
     }
     catch(err) {
-        console.log('Error parsing XML :', err)
-        logger.error('Error parsing XML :', err)
-    }    
+        console.log('Error translating JSON :', err)
+        logger.error('Error translating JSON :', err)
+        throw err;
+    }
 }
 
 exports.readFile = function(path){
