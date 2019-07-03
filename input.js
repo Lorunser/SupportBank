@@ -1,6 +1,5 @@
 //user input
 const readline = require('readline-sync');
-const moment = require('moment');
 const logger = require("./logger.js").logger;
 const DataFormatter = require("./dataConversion").DataFormatter;
 
@@ -37,7 +36,6 @@ exports.getInput = function(people){
 exports.createRecordArray = function(path){
     const fs = require('fs');
     logger.debug('Trying to read from ' + path)
-    let recordArray;
     let text;
 
     try{
@@ -50,16 +48,13 @@ exports.createRecordArray = function(path){
 
     try{
         if(path.match("/*.json")){
-            recordArray = DataFormatter.createRecordArrayFromJson(text);
-            return recordArray;
+            return DataFormatter.createRecordArrayFromJson(text);
         }
         else if(path.match("/*.csv")){
-            recordArray = DataFormatter.createRecordArrayFromCsv(text);
-            return recordArray;
+            return DataFormatter.createRecordArrayFromCsv(text);
         }
         else if(path.match("/*.xml")){
-            recordArray = DataFormatter.createRecordArrayFromXml(text);
-            return recordArray;
+            return DataFormatter.createRecordArrayFromXml(text);
         }
         else{
             let message = 'Unsupported filetype';

@@ -13,7 +13,7 @@ exports.DataFormatter = class DataFormatter{
         return recordArray;
     };
     
-    static createRecordArrayFromJson(jsonArray){
+    static createRecordArrayFromJson(jsonString){
         const translator = {
             "Date": "Date",
             "Narrative": "Narrative",
