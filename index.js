@@ -1,16 +1,17 @@
 //#region imports
 //file imports
-record = require('./record.js');
-Person = require('./person.js').Person;
-createPeopleObject = require('./person.js').createPeopleObject;
-readFile = require("./input.js").readFile;
-getInput = require("./input.js").getInput;
+const record = require('./record.js');
+const Person = require('./person.js').Person;
+const createPeopleObject = require('./person.js').createPeopleObject;
+const readFile = require("./input.js").readFile;
+const getInput = require("./input.js").getInput;
+
 const logger = require("./logger.js").logger;
 
 //main
 function main(){
     logger.debug('Program launched');
-    let recordArray = readFile('./data/Transactions2014.csv');
+    let recordArray = readFile('./data/Transactions2013.json');
     let people = createPeopleObject(recordArray);
     
     while(true){

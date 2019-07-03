@@ -9,4 +9,4 @@ log4js.configure({
     }
 });
 
-export const logger = log4js.getLogger('./logs/debug.log');
+exports.logger = log4js.getLogger('./logs/debug.log');

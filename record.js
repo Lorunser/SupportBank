@@ -1,5 +1,6 @@
 //imports
 const moment = require('moment');
+const logger = require('./logger.js').logger;
 
 exports.Record = class Record{
     //CSV props: Date,From,To,Narrative,Amount
@@ -17,10 +18,6 @@ exports.Record = class Record{
         }
 
         this.validate();
-    }
-
-    constructFromXml(xmlItem){
-
     }
 
     constructFromJson(jsonItem){
@@ -87,20 +84,6 @@ exports.Record = class Record{
     }
 }
 
-class csvRecord{
-    
-}
-
-exports.createRecordArrayFromJson = function(jsonArray){
-    let recordArray = new Array();
-
-    for(let i = 0; i < jsonArray.length; i++){
-        let record = new exports.Record(jsonArray[i]);
-        recordArray.push(record);
-    }
-
-    return recordArray;
-}
 
 exports.createRecordArrayFromCSV = function(lines){
     //takes input as an Array of lines
@@ -117,4 +100,31 @@ exports.createRecordArrayFromCSV = function(lines){
     }
 
     return recordArray;
+}
+
+exports.DataFormatter = class DataFormatter{
+    static createRecordArrayFromJson(jsonArray){
+        let recordArray = new Array();
+
+        for(let i = 0; i < jsonArray.length; i++){
+            let record = new exports.Record(jsonArray[i]);
+            recordArray.push(record);
+        }
+
+        return recordArray;
+    }
+
+    static createRecordArrayFromCsv(lines){
+        var propNames = lines[0].split(',');
+        var recordArray = new Array();
+
+        for(i = 1; i < lines.length; i++){
+            var line = lines[i];
+            var record = new exports.Record(propNames, line);
+
+            recordArray.push(record);
+        }
+
+        return recordArray;
+    }
 }

@@ -1,19 +1,8 @@
 //user input
 const readline = require('readline-sync');
 const moment = require('moment');
-
-//#region logger
-var log4js = require('log4js');
-log4js.configure({
-    appenders: {
-        file: { type: 'fileSync', filename: './logs/debug.log' }
-    },
-    categories: {
-        default: { appenders: ['file'], level: 'debug'}
-    }
-});
-const logger = log4js.getLogger('./logs/debug.log');
-//#endregion
+const logger = require("./logger.js").logger;
+const DataFormatter = require("./record").DataFormatter;
 
 exports.getInput = function(people){
     //return [Name] or All
@@ -49,7 +38,7 @@ function readCSV(csvString){
     try{
         csvString = String(csvString);
         let lines = csvString.split('\n');
-        let recordArray = record.createRecordArrayFromCSV(lines); 
+        let recordArray = DataFormatter.createRecordArrayFromCSV(lines); 
         return recordArray;
     }  
     catch(err) {
@@ -62,7 +51,7 @@ function readCSV(csvString){
 function readJSON(jsonString){
     try{
         let jsonArray = JSON.parse(jsonString);
-        let recordArray = record.createRecordArrayFromJson(jsonArray);
+        let recordArray = DataFormatter.createRecordArrayFromJson(jsonArray);
         return recordArray;
     }  
     catch(err) {
