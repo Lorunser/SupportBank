@@ -1,6 +1,3 @@
-// imports
-const record = require('moment');
-
 exports.Person = class Person{
     constructor(recordArray, name){
         this.name = name;

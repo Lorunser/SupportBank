@@ -38,12 +38,13 @@ function readCSV(csvString){
     try{
         csvString = String(csvString);
         let lines = csvString.split('\n');
-        let recordArray = DataFormatter.createRecordArrayFromCSV(lines); 
+        let recordArray = DataFormatter.createRecordArrayFromCsv(lines); 
         return recordArray;
     }  
     catch(err) {
         console.log('Error parsing CSV string:', err)
         logger.error('Error parsing CSV string:', err)
+        throw err;
     }
     
 }
@@ -57,6 +58,7 @@ function readJSON(jsonString){
     catch(err) {
         console.log('Error parsing JSON string:', err)
         logger.error('Error parsing JSON string:', err)
+        throw err;
     }
 }
 

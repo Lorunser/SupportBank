@@ -6,51 +6,24 @@ exports.Record = class Record{
     //CSV props: Date,From,To,Narrative,Amount
     //json props: [{Date FromAccount ToAccount Narrative Amount}]
 
-    constructor(namesOrJson, csvLine){
-        //1 argument for JSON, 2 for csv     
-        if(csvLine === undefined){
-            //json
-            this.constructFromJson(namesOrJson);
-        }
-        else{
-            //csv
-            this.constructFromCSV(namesOrJson, csvLine);
-        }
-
+    constructor(jsonRecord){
+        this.assignProps(jsonRecord);
         this.validate();
     }
 
-    constructFromJson(jsonItem){
+    //#region instance methods
+    assignProps(jsonItem){
+        const props = ["Date", "From", "To", "Narrative", "Amount"]; 
         let propNames = Object.keys(jsonItem);
 
         for(let i = 0; i < propNames.length; i ++){
             let property = propNames[i];
-
-            if(property === "FromAccount"){
-                this["From"] = jsonItem[property];
-            }
-            else if(property === "ToAccount"){
-                this["To"] = jsonItem[property];
-            }
-            else{
+            if(props.includes(property)){
                 this[property] = jsonItem[property]; 
             }
-        }
-
-        //mary formats
-        if(this.hasOwnProperty("FromAccount")){
-            this.From = this.FromAccount;
-        }
-        if(this.hasOwnProperty("ToAccount")){
-            this.To = this.ToAccount;
-        }
-    }
-
-    constructFromCSV(propNames, csvLine){
-        let items = csvLine.split(',');
-
-        for(var i = 0; i < propNames.length; i++){
-            this[propNames[i]] = items[i];
+            else{
+                throw "Property (" + property + ") not allowed in domain model";
+            }
         }
     }
 
@@ -82,6 +55,41 @@ exports.Record = class Record{
         let repr = this.Amount.toFixed(1) + " on " + moment(this.Date).format("DD-MM-YYYY") + " for " + this.Narrative + " | " + this.From + " >> " + this.To;
         return repr;
     }
+    //#endregion
+
+    //#region static conversion methods
+    static newFromCsv(propNames, csvLine){
+        let items = csvLine.split(',');
+        let jsonRecord = new Object();
+
+        for(var i = 0; i < propNames.length; i++){
+            jsonRecord[propNames[i]] = items[i];
+        }
+
+        return new Record(jsonRecord);
+    }
+
+    static newFromJson(jsonOld){
+        let propNames = Object.keys(jsonOld);
+        let jsonRecord = new Object();
+
+        for(var i = 0; i < propNames.length; i++){
+            let property = propNames[i]
+
+            if(property === "FromAccount"){
+                jsonRecord["From"] = jsonOld[property];
+            }
+            else if(property === "ToAccount"){
+                jsonRecord["To"] = jsonOld[property];
+            }
+            else{
+                jsonRecord[property] = jsonOld[property]; 
+            }
+        }
+
+        return new Record(jsonRecord);
+    }
+    //#endregion
 }
 
 exports.DataFormatter = class DataFormatter{
@@ -89,7 +97,8 @@ exports.DataFormatter = class DataFormatter{
         let recordArray = new Array();
 
         for(let i = 0; i < jsonArray.length; i++){
-            let record = new exports.Record(jsonArray[i]);
+            let jsonInputRecord = jsonArray[i];
+            let record = exports.Record.newFromJson(jsonInputRecord);
             recordArray.push(record);
         }
 
@@ -100,10 +109,9 @@ exports.DataFormatter = class DataFormatter{
         var propNames = lines[0].split(',');
         var recordArray = new Array();
 
-        for(i = 1; i < lines.length; i++){
+        for(let i = 1; i < lines.length; i++){
             var line = lines[i];
-            var record = new exports.Record(propNames, line);
-
+            var record = exports.Record.newFromCsv(propNames, line);
             recordArray.push(record);
         }
 
