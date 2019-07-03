@@ -5,22 +5,7 @@ Person = require('./person.js').Person;
 createPeopleObject = require('./person.js').createPeopleObject;
 readFile = require("./input.js").readFile;
 getInput = require("./input.js").getInput;
-//#endregion
-
-//#region logging
-var log4js = require('log4js');
-
-log4js.configure({
-    appenders: {
-        file: { type: 'fileSync', filename: './logs/debug.log' }
-    },
-    categories: {
-        default: { appenders: ['file'], level: 'debug'}
-    }
-});
-
-const logger = log4js.getLogger('./logs/debug.log');
-//#endregion
+const logger = require("./logger.js").logger;
 
 //main
 function main(){

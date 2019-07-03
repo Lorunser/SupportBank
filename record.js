@@ -28,7 +28,16 @@ exports.Record = class Record{
 
         for(let i = 0; i < propNames.length; i ++){
             let property = propNames[i];
-            this[property] = jsonItem[property];
+
+            if(property === "FromAccount"){
+                this["From"] = jsonItem[property];
+            }
+            else if(property === "ToAccount"){
+                this["To"] = jsonItem[property];
+            }
+            else{
+                this[property] = jsonItem[property]; 
+            }
         }
 
         //mary formats
