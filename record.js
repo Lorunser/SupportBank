@@ -72,8 +72,9 @@ exports.Record = class Record{
         }
     }
 
-    toString(){
-        return this.Amount.toFixed(1) + " on " + moment(this.Date).format("DD-MM-YYYY") + " for " + this.Narrative + " | " + this.From + " >> " + this.To;
+    stringify(){
+        let repr = this.Amount.toFixed(1) + " on " + moment(this.Date).format("DD-MM-YYYY") + " for " + this.Narrative + " | " + this.From + " >> " + this.To;
+        return repr;
     }
 }
 

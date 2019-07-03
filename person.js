@@ -1,3 +1,6 @@
+// imports
+const record = require('moment');
+
 exports.Person = class Person{
     constructor(recordArray, name){
         this.name = name;
@@ -27,13 +30,13 @@ exports.Person = class Person{
         console.log("---RECEIVED---");
 
         for(var i = 0; i < this.received.length; i++){
-            console.log(this.received[i].toString());
+            console.log(this.received[i].stringify());
         }
 
         console.log("-----SENT-----");
 
         for(var i = 0; i < this.sent.length; i++){
-            console.log(this.sent[i].toString());
+            console.log(this.sent[i].stringify());
         }
     }
 }

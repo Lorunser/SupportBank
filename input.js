@@ -1,5 +1,6 @@
 //user input
 const readline = require('readline-sync');
+const moment = require('moment');
 
 //#region logger
 var log4js = require('log4js');
@@ -83,7 +84,7 @@ function resolve(obj, path){
 function readXML(xmlString){
     const translator = {
         "Date": "_attributes.Date",
-        "Narration": "Description._text",
+        "Narrative": "Description._text",
         "From": "Parties.From._text",
         "To": "Parties.To._text",
         "Amount": "Value._text"
@@ -96,7 +97,7 @@ function readXML(xmlString){
         let jsonArray = JSON.parse(jsonString);
         jsonArray = jsonArray.TransactionList.SupportTransaction;
 
-        return translate(jsonArray, translator);
+        return record.createRecordArrayFromJson(translate(jsonArray, translator));
     }
     catch(err) {
         console.log('Error parsing XML :', err)
@@ -119,8 +120,11 @@ function translate(jsonArray, translator){
                 let propertyInXml = translator[propertyInModel];
                 let value = resolve(jsonRecord, propertyInXml);
                 jsonModelRecord[propertyInModel] = value;
-
             }
+            //bodge to convert dates
+            jsonModelRecord.Date = (jsonModelRecord.Date - 25569) * 86400;
+            jsonModelRecord.Date = moment(jsonModelRecord.Date, "X");
+
             jsonModelArray.push(jsonModelRecord);
         }
 

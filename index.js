@@ -25,7 +25,7 @@ const logger = log4js.getLogger('./logs/debug.log');
 //main
 function main(){
     logger.debug('Program launched');
-    let recordArray = readFile('./data/Transactions2012.xml');
+    let recordArray = readFile('./data/Transactions2013.json');
     let people = createPeopleObject(recordArray);
     
     while(true){
