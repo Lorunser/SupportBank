@@ -25,12 +25,12 @@ const logger = log4js.getLogger('./logs/debug.log');
 //main
 function main(){
     logger.debug('Program launched');
-    let recordArray = readFile('./data/Transactions2013.json');
+    let recordArray = readFile('./data/Transactions2014.csv');
     let people = createPeopleObject(recordArray);
     
     while(true){
-        //var secondOption = getInput(people);
-        var secondOption = "Todd";
+        var secondOption = getInput(people);
+        //var secondOption = "Todd";
         var name, person;
 
         if(secondOption === "All"){

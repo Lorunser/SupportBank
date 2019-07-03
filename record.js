@@ -36,7 +36,7 @@ exports.Record = class Record{
             this.From = this.FromAccount;
         }
         if(this.hasOwnProperty("ToAccount")){
-            this.To = this.toAccount;
+            this.To = this.ToAccount;
         }
     }
 
