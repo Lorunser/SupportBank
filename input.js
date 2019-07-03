@@ -34,19 +34,6 @@ exports.getInput = function(people){
     }
 }
 
-function readJSON(jsonString){
-    try{
-        let jsonArray = JSON.parse(jsonString);
-        let recordArray = DataFormatter.createRecordArrayFromJson(jsonArray);
-        return recordArray;
-    }  
-    catch(err) {
-        console.log('Error parsing JSON string:', err)
-        logger.error('Error parsing JSON string:', err)
-        throw err;
-    }
-}
-
 exports.createRecordArray = function(path){
     const fs = require('fs');
     logger.debug('Trying to read from ' + path)
@@ -63,7 +50,7 @@ exports.createRecordArray = function(path){
 
     try{
         if(path.match("/*.json")){
-            recordArray = readJSON(text);
+            recordArray = DataFormatter.createRecordArrayFromJson(text);
             return recordArray;
         }
         else if(path.match("/*.csv")){

@@ -21,17 +21,12 @@ exports.DataFormatter = class DataFormatter{
             "To": "ToAccount",
             "Amount": "Amount"
         };
-        
+
+        let jsonArray = JSON.parse(jsonString);        
         return this.createFromAnyJson(jsonArray, translator);
     }
 
-    static createRecordArrayFromXml(xmlString){
-        let convert = require('xml-js');
-        let jsonString = convert.xml2json(xmlString, {compact: true, spaces: 4});
-        
-        let jsonArray = JSON.parse(jsonString);
-        jsonArray = jsonArray.TransactionList.SupportTransaction;
-        
+    static createRecordArrayFromXml(xmlString){        
         const translator = {
             "Date": "_attributes.Date",
             "Narrative": "Description._text",
@@ -39,6 +34,12 @@ exports.DataFormatter = class DataFormatter{
             "To": "Parties.To._text",
             "Amount": "Value._text"
         };
+
+        let convert = require('xml-js');
+        let jsonString = convert.xml2json(xmlString, {compact: true, spaces: 4});
+        
+        let jsonArray = JSON.parse(jsonString);
+        jsonArray = jsonArray.TransactionList.SupportTransaction;
 
         return this.createFromAnyJson(jsonArray, translator);
     }
