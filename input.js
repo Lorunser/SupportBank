@@ -62,23 +62,6 @@ function readJSON(jsonString){
     }
 }
 
-function readXML(xmlString){
-    try{
-        let convert = require('xml-js');
-        let jsonString = convert.xml2json(xmlString, {compact: true, spaces: 4});
-        
-        let jsonArray = JSON.parse(jsonString);
-        jsonArray = jsonArray.TransactionList.SupportTransaction;
-
-        return DataFormatter.createRecordArrayFromXml(jsonArray);
-    }
-    catch(err) {
-        console.log('Error parsing XML :', err)
-        logger.error('Error parsing XML :', err)
-        throw err;
-    }    
-}
-
 exports.readFile = function(path){
     const fs = require('fs');
     logger.debug('Trying to read from ' + path)
@@ -89,26 +72,31 @@ exports.readFile = function(path){
         text = fs.readFileSync(path);
     }
     catch (err) {
-        console.log("File read failed:", err);
         logger.error('File read failed', err)
-        return;
+        throw err;
     }
 
-    if(path.match("/*.json")){
-        recordArray = readJSON(text);
-        return recordArray;
+    try{
+        if(path.match("/*.json")){
+            recordArray = readJSON(text);
+            return recordArray;
+        }
+        else if(path.match("/*.csv")){
+            recordArray = readCSV(text);
+            return recordArray;
+        }
+        else if(path.match("/*.xml")){
+            recordArray = DataFormatter.createRecordArrayFromXml(text);
+            return recordArray;
+        }
+        else{
+            let message = 'Unsupported filetype';
+            logger.error(message);
+            throw message;
+        }
     }
-    else if(path.match("/*.csv")){
-        recordArray = readCSV(text);
-        return recordArray;
-    }
-    else if(path.match("/*.xml")){
-        recordArray = readXML(text);
-        return recordArray;
-    }
-    else{
-        console.log('Unsupported filetype');
-        logger.error('Unsupported filetype');
-        return;
+    catch(err){
+        logger.error("Error while converting to domain model", err);
+        throw err;
     }
 }

@@ -45,8 +45,13 @@ exports.Record = class Record{
             this.Date = testDate;
         }
         else{
+            this.Date = (this.Date - 25569) * 86400;
+            this.Date = moment(this.Date, "X");
+        }
+
+        if(moment(this.Date).isValid() == false){
             var error_message = this.Date + " is not a valid date >> setting to Y2K 1/1/2000"
-            console.log(error_message);
+            logger.info(error_message);
             this.Date = moment("1/1/2000", "DD-MM-YYYY");
         }
     }
@@ -143,7 +148,7 @@ exports.DataFormatter = class DataFormatter{
         return recordArray;
     }
 
-    static createRecordArrayFromXml(anyJsonArray){
+    static createRecordArrayFromXml(xmlString){
         const translator = {
             "Date": "_attributes.Date",
             "Narrative": "Description._text",
@@ -151,11 +156,16 @@ exports.DataFormatter = class DataFormatter{
             "To": "Parties.To._text",
             "Amount": "Value._text"
         };
+        let convert = require('xml-js');
+        let jsonString = convert.xml2json(xmlString, {compact: true, spaces: 4});
+        
+        let jsonArray = JSON.parse(jsonString);
+        jsonArray = jsonArray.TransactionList.SupportTransaction;
 
         let recordArray = new Array();
 
-        for(let i = 0; i < anyJsonArray.length; i++){
-            let jsonInputRecord = anyJsonArray[i];
+        for(let i = 0; i < jsonArray.length; i++){
+            let jsonInputRecord = jsonArray[i];
             let record = exports.Record.newFromAnyJson(jsonInputRecord, translator);
             recordArray.push(record);
         }
