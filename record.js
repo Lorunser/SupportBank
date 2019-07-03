@@ -31,7 +31,7 @@ exports.Record = class Record{
         //amount validation
         if(isNaN(this.Amount)){
             var error_message = this.Amount + " is not a valid amount >> setting to 0"
-            console.log(error_message);
+            logger.info(error_message);
             this.Amount = 0;
         }
         else{
@@ -74,27 +74,6 @@ exports.Record = class Record{
         return new Record(jsonRecord);
     }
 
-    static newFromJson(jsonOld){
-        let propNames = Object.keys(jsonOld);
-        let jsonRecord = new Object();
-
-        for(var i = 0; i < propNames.length; i++){
-            let property = propNames[i]
-
-            if(property === "FromAccount"){
-                jsonRecord["From"] = jsonOld[property];
-            }
-            else if(property === "ToAccount"){
-                jsonRecord["To"] = jsonOld[property];
-            }
-            else{
-                jsonRecord[property] = jsonOld[property]; 
-            }
-        }
-
-        return new Record(jsonRecord);
-    }
-
     static newFromAnyJson(jsonOld, translator){
         let modelProps = Object.keys(translator);
         let jsonRecord = new Object();
@@ -120,60 +99,4 @@ exports.Record = class Record{
         return current;
     }
     //#endregion
-}
-
-exports.DataFormatter = class DataFormatter{
-    static createRecordArrayFromJson(jsonArray){
-        let recordArray = new Array();
-
-        for(let i = 0; i < jsonArray.length; i++){
-            let jsonInputRecord = jsonArray[i];
-            let record = exports.Record.newFromJson(jsonInputRecord);
-            recordArray.push(record);
-        }
-
-        return recordArray;
-    }
-
-    static createRecordArrayFromCsv(csvString){
-        csvString = String(csvString);
-        let lines = csvString.split('\n');
-
-        var propNames = lines[0].split(',');
-        var recordArray = new Array();
-
-        for(let i = 1; i < lines.length; i++){
-            var line = lines[i];
-            var record = exports.Record.newFromCsv(propNames, line);
-            recordArray.push(record);
-        }
-
-        return recordArray;
-    }
-
-    static createRecordArrayFromXml(xmlString){
-        const translator = {
-            "Date": "_attributes.Date",
-            "Narrative": "Description._text",
-            "From": "Parties.From._text",
-            "To": "Parties.To._text",
-            "Amount": "Value._text"
-        };
-
-        let convert = require('xml-js');
-        let jsonString = convert.xml2json(xmlString, {compact: true, spaces: 4});
-        
-        let jsonArray = JSON.parse(jsonString);
-        jsonArray = jsonArray.TransactionList.SupportTransaction;
-
-        let recordArray = new Array();
-
-        for(let i = 0; i < jsonArray.length; i++){
-            let jsonInputRecord = jsonArray[i];
-            let record = exports.Record.newFromAnyJson(jsonInputRecord, translator);
-            recordArray.push(record);
-        }
-
-        return recordArray;
-    }
 }

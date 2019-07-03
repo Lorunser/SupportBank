@@ -2,7 +2,7 @@
 const readline = require('readline-sync');
 const moment = require('moment');
 const logger = require("./logger.js").logger;
-const DataFormatter = require("./record").DataFormatter;
+const DataFormatter = require("./dataConversion").DataFormatter;
 
 exports.getInput = function(people){
     //return [Name] or All
@@ -47,7 +47,7 @@ function readJSON(jsonString){
     }
 }
 
-exports.readFile = function(path){
+exports.createRecordArray = function(path){
     const fs = require('fs');
     logger.debug('Trying to read from ' + path)
     let recordArray;
