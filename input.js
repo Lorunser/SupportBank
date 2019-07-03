@@ -1,3 +1,19 @@
+//user input
+const readline = require('readline-sync');
+
+//#region logger
+var log4js = require('log4js');
+log4js.configure({
+    appenders: {
+        file: { type: 'fileSync', filename: './logs/debug.log' }
+    },
+    categories: {
+        default: { appenders: ['file'], level: 'debug'}
+    }
+});
+const logger = log4js.getLogger('./logs/debug.log');
+//#endregion
+
 exports.getInput = function(people){
     //return [Name] or All
     console.log("1) List All")
@@ -54,6 +70,16 @@ function readJSON(jsonString){
     }
 }
 
+function resolve(obj, path){
+    path = path.split('.');
+    var current = obj;
+    while(path.length) {
+        if(typeof current !== 'object') return undefined;
+        current = current[path.shift()];
+    }
+    return current;
+}
+
 function readXML(xmlString){
     const translator = {
         "Date": "attributes.Date",
@@ -81,13 +107,7 @@ function readXML(xmlString){
             for(let j = 0; j < propNames.length; j ++){
                 let propertyInModel = propNames[j];
                 let propertyInXml = translator[propertyInModel];
-                let x = [jsonRecord].concat(propertyInXml.split('.'));
-                try{
-                    var value = x.reduce(function(a, b) { return a[b] });
-                }
-                catch (err) {
-                    console.log("error xml");
-                }
+                let value = resolve(jsonRecord, propertyInXml);
                 jsonModelRecord[propertyInModel] = value;
 
             }

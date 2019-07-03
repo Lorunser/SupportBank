@@ -1,7 +1,4 @@
 //#region imports
-//user input
-const readline = require('readline-sync');
-
 //file imports
 record = require('./record.js');
 Person = require('./person.js').Person;
@@ -28,7 +25,7 @@ const logger = log4js.getLogger('./logs/debug.log');
 //main
 function main(){
     logger.debug('Program launched');
-    let recordArray = readFile('./Transactions2012.xml');
+    let recordArray = readFile('./data/Transactions2012.xml');
     let people = createPeopleObject(recordArray);
     
     while(true){
