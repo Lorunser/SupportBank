@@ -14,7 +14,7 @@ exports.DataFormatter = class DataFormatter{
     };
     
     static createRecordArrayFromJson(jsonString){
-        const translator = {
+        let translator = {
             "Date": "Date",
             "Narrative": "Narrative",
             "From": "FromAccount",
@@ -22,7 +22,18 @@ exports.DataFormatter = class DataFormatter{
             "Amount": "Amount"
         };
 
-        let jsonArray = JSON.parse(jsonString);        
+        let jsonArray = JSON.parse(jsonString);
+        
+        //checks to see if has correct data
+        let testRecord = jsonArray[0];
+        let newTranslator = new Object();
+        if(testRecord.hasOwnProperty("From")){
+            for(let key in testRecord){
+                newTranslator[key] = key;
+            }
+            translator = newTranslator;
+        }
+
         return this.createFromAnyJson(jsonArray, translator);
     }
 

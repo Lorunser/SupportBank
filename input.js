@@ -41,6 +41,7 @@ exports.getInput = function(people, recordArray){
 
 exports.createRecordArray = function(path){
     const fs = require('fs');
+    console.log("Reading from " + path)
     logger.debug('Trying to read from ' + path)
     let text;
 

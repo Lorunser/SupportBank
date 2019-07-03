@@ -7,7 +7,7 @@ const logger = require("./logger.js").logger;
 //main
 function main(){
     logger.debug('Program launched');
-    let recordArray = createRecordArray('./data/Transactions2013.json');
+    let recordArray = createRecordArray('./output/test2.json');
     let people = Person.createPeopleObject(recordArray);
     
     while(true){
