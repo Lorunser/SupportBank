@@ -89,6 +89,31 @@ exports.Record = class Record{
 
         return new Record(jsonRecord);
     }
+
+    static newFromAnyJson(jsonOld, translator){
+        let modelProps = Object.keys(translator);
+        let jsonRecord = new Object();
+
+        for(let i = 0; i < modelProps.length; i++){
+            let modelName = modelProps[i];
+            let oldName = translator[modelName];
+
+            let value = Record.resolve(jsonOld, oldName);
+            jsonRecord[modelName] = value;
+        }
+
+        return new Record(jsonRecord);
+    }
+
+    static resolve(obj, path){
+        path = path.split('.');
+        var current = obj;
+        while(path.length) {
+            if(typeof current !== 'object') return undefined;
+            current = current[path.shift()];
+        }
+        return current;
+    }
     //#endregion
 }
 
@@ -112,6 +137,26 @@ exports.DataFormatter = class DataFormatter{
         for(let i = 1; i < lines.length; i++){
             var line = lines[i];
             var record = exports.Record.newFromCsv(propNames, line);
+            recordArray.push(record);
+        }
+
+        return recordArray;
+    }
+
+    static createRecordArrayFromXml(anyJsonArray){
+        const translator = {
+            "Date": "_attributes.Date",
+            "Narrative": "Description._text",
+            "From": "Parties.From._text",
+            "To": "Parties.To._text",
+            "Amount": "Value._text"
+        };
+
+        let recordArray = new Array();
+
+        for(let i = 0; i < anyJsonArray.length; i++){
+            let jsonInputRecord = anyJsonArray[i];
+            let record = exports.Record.newFromAnyJson(jsonInputRecord, translator);
             recordArray.push(record);
         }
 

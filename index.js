@@ -10,7 +10,7 @@ const logger = require("./logger.js").logger;
 //main
 function main(){
     logger.debug('Program launched');
-    let recordArray = readFile('./data/Transactions2014.csv');
+    let recordArray = readFile('./data/Transactions2012.xml');
     let people = Person.createPeopleObject(recordArray);
     
     while(true){

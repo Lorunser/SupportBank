@@ -88,44 +88,14 @@ function readXML(xmlString){
         let jsonArray = JSON.parse(jsonString);
         jsonArray = jsonArray.TransactionList.SupportTransaction;
 
-        return record.createRecordArrayFromJson(translate(jsonArray, translator));
+        //return DataFormatter.createRecordArrayFromJson(translate(jsonArray, translator));
+        return DataFormatter.createRecordArrayFromXml(jsonArray);
     }
     catch(err) {
         console.log('Error parsing XML :', err)
         logger.error('Error parsing XML :', err)
         throw err;
     }    
-}
-
-function translate(jsonArray, translator){
-    try{
-        const propNames = Object.keys(translator);
-        let jsonModelArray = new Array();
-
-        for(let i = 0; i < jsonArray.length; i++){
-            let jsonRecord = jsonArray[i];
-            let jsonModelRecord = new Object();
-
-            for(let j = 0; j < propNames.length; j ++){
-                let propertyInModel = propNames[j];
-                let propertyInXml = translator[propertyInModel];
-                let value = resolve(jsonRecord, propertyInXml);
-                jsonModelRecord[propertyInModel] = value;
-            }
-            //bodge to convert dates
-            jsonModelRecord.Date = (jsonModelRecord.Date - 25569) * 86400;
-            jsonModelRecord.Date = moment(jsonModelRecord.Date, "X");
-
-            jsonModelArray.push(jsonModelRecord);
-        }
-
-        return jsonModelArray;
-    }
-    catch(err) {
-        console.log('Error translating JSON :', err)
-        logger.error('Error translating JSON :', err)
-        throw err;
-    }
 }
 
 exports.readFile = function(path){
