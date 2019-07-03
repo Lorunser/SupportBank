@@ -1,5 +1,4 @@
 const log4js = require('log4js');
-
 log4js.configure({
     appenders: {
         file: { type: 'fileSync', filename: './logs/debug.log' }
@@ -8,5 +7,4 @@ log4js.configure({
         default: { appenders: ['file'], level: 'debug'}
     }
 });
-
 exports.logger = log4js.getLogger('./logs/debug.log');
