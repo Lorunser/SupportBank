@@ -2,11 +2,13 @@
 const readline = require('readline-sync');
 const logger = require("./logger.js").logger;
 const DataFormatter = require("./dataConversion").DataFormatter;
+const writeFile = require("./output.js").writeFile;
 
-exports.getInput = function(people){
+exports.getInput = function(people, recordArray){
     //return [Name] or All
-    console.log("1) List All")
-    console.log("2) List [Account Name]")
+    console.log("1) List All");
+    console.log("2) List [Account Name]");
+    console.log("3) Export [Filename]");
 
     var input = readline.prompt();
     logger.debug('User input: ' + input);
@@ -22,14 +24,18 @@ exports.getInput = function(people){
         else{
             logger.debug('Inputted name is not in records');
             console.log("That person is not in our records. Try Again \n");
-            return getInput();
+            return exports.getInput(people, recordArray);
         }
     }
-
+    else if(command === "Export"){
+        writeFile(name, recordArray);
+        console.log("File saved");
+        return exports.getInput();
+    }
     else{
         logger.debug('Unsupported command');
         console.log("Invalid command. Try again \n");
-        return getInput();
+        return exports.getInput(people, recordArray);
     }
 }
 

@@ -11,8 +11,7 @@ function main(){
     let people = Person.createPeopleObject(recordArray);
     
     while(true){
-        var secondOption = getInput(people);
-        //var secondOption = "Todd";
+        var secondOption = getInput(people, recordArray);
         var name, person;
 
         if(secondOption === "All"){
