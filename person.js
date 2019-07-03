@@ -39,25 +39,25 @@ exports.Person = class Person{
             console.log(this.sent[i].stringify());
         }
     }
-}
 
-exports.createPeopleObject = function(recordArray){
-    // dictionary maps names to instances of Person class
-    var people = new Object();
+    static createPeopleObject(recordArray){
+        // dictionary maps names to instances of Person class
+        var people = new Object();
 
-    for(var i = 0; i < recordArray.length; i++){
-        var record = recordArray[i];
-        var from_name = record.From;
-        var to_name = record.To;
+        for(var i = 0; i < recordArray.length; i++){
+            var record = recordArray[i];
+            var from_name = record.From;
+            var to_name = record.To;
 
-        if(people.hasOwnProperty(from_name) == false){
-            people[from_name] = new exports.Person(recordArray, from_name);
+            if(people.hasOwnProperty(from_name) == false){
+                people[from_name] = new exports.Person(recordArray, from_name);
+            }
+
+            if(people.hasOwnProperty(to_name) == false){
+                people[to_name] = new exports.Person(recordArray, to_name);
+            }
         }
 
-        if(people.hasOwnProperty(to_name) == false){
-            people[to_name] = new exports.Person(recordArray, to_name);
-        }
+        return people;
     }
-
-    return people;
 }
